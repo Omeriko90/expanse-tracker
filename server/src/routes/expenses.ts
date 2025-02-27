@@ -2,6 +2,7 @@ import {
   deleteExpenseById,
   getAllExpenses,
   getExpenseById,
+  getTotalExpenseSummaryByDateRange,
   insertExpense,
   updateExpense,
 } from "@/db/expenses_model";
@@ -45,6 +46,27 @@ router.delete("/delete_expense/:id", async (req: Request, res: Response) => {
   }
 });
 
+router.post("/total", async (req: Request, res: Response) => {
+  try {
+    const body = req.body;
+    const start = body.start;
+    const end = body.end;
+    console.log("object");
+    if (!start || !end) {
+      res.status(400).json("Invalid date range");
+    }
+    const expense = await getTotalExpenseSummaryByDateRange(
+      start as string,
+      end as string
+    );
+    console.log(expense);
+    res.send(expense);
+  } catch (error: any) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
+
 router.get("/:id", async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
@@ -65,7 +87,7 @@ router.get("/", async (req: Request, res: Response) => {
       sortBy as string,
       sortDirection as string
     );
-    console.log(response);
+
     res.send(response);
   } catch (error: any) {
     console.log(error);

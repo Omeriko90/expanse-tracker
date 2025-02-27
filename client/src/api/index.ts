@@ -12,6 +12,10 @@ interface ApiType {
     id: number,
     newExpense: Expense
   ) => Promise<AxiosResponse<{ expense: Expense }>>;
+  getMonthTotalExpense: (dateRange: {
+    startMonthDate: string;
+    endMonthDate: string;
+  }) => Promise<AxiosResponse<{ totalAmount: number }>>;
   getAllExpenses: (sort: Sort) => Promise<AxiosResponse<Expense[]>>;
   getExpensesById: (id: number) => Promise<AxiosResponse<Expense>>;
   deleteExpense: (id: number) => Promise<AxiosResponse<{ success: boolean }>>;
@@ -45,6 +49,14 @@ export default {
       `/expenses?sortBy=${sort.sortBy}&sortDirection=${sort.sortDirection}`
     ),
   getExpensesById: (id: number) => api.get(`/expenses/${id}`),
+  getMonthTotalExpense: (dateRange: {
+    startMonthDate: string;
+    endMonthDate: string;
+  }) =>
+    api.post(`/expenses/total`, {
+      start: dateRange.startMonthDate,
+      end: dateRange.endMonthDate,
+    }),
   deleteExpense: (id: number) => api.delete(`/expenses/delete_expense/${id}`),
   addCategory: (newCategory: Category) =>
     api.post("/categories/create_category", {

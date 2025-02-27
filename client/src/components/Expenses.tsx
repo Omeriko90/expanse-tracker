@@ -5,14 +5,17 @@ import { Box, Typography } from "@mui/material";
 import AddButton from "./common/AddButton";
 import { useHistory } from "react-router-dom";
 import SortBySelect from "./common/SortBySelect";
+import moment from "moment";
+import useGetMonthTotalExpenses from "../hooks/useGetMonthTotalExpenses";
 
 function Expenses() {
   const history = useHistory();
+  const { data: totalMonthExpense } = useGetMonthTotalExpenses();
   const { data: expenses, isLoading } = useGetAllExpenses();
 
   const handleAddButtonClick = () => history.push("/add");
 
-  return isLoading ? (
+  return isLoading && false ? (
     <LoadingState />
   ) : (
     <Box
@@ -48,6 +51,11 @@ function Expenses() {
           <SortBySelect />
         </Box>
         <ExpensesList expenses={expenses} isLoading={isLoading} />
+        <Box>
+          <Typography variant="h6">
+            Total Expense for {moment().format("MMMM")}: {totalMonthExpense}$
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );

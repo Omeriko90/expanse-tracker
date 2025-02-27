@@ -17,6 +17,22 @@ async function getExpenseById(id: string) {
   }
 }
 
+async function getTotalExpenseSummaryByDateRange(start: string, end: string) {
+  const [rows] = await pool.query(
+    `
+          SELECT sum(amount) as totalAmount
+          FROM expenses
+          WHERE createdAt between timestamp(?) and timestamp(?)
+          `,
+    [start, end]
+  );
+  if (Array.isArray(rows) && rows.length > 0) {
+    return rows[0];
+  } else {
+    return 0;
+  }
+}
+
 async function getAllExpenses(sortBy: string, sortDirection: string) {
   const [rows] = await pool.query(
     `
@@ -67,4 +83,5 @@ export {
   updateExpense,
   deleteExpenseById,
   insertExpense,
+  getTotalExpenseSummaryByDateRange,
 };

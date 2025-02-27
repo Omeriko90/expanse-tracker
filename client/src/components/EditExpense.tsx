@@ -13,7 +13,6 @@ const EditExpense = () => {
   const { mutate: updateExpense } = useUpdateExpense(intId);
 
   const handleAddExpenseSubmit = (updatedExpense: Expense) => {
-    console.log({ updatedExpense });
     updateExpense(updatedExpense);
   };
 

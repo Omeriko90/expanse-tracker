@@ -3,7 +3,7 @@ import ExpenseForm from "./common/ExpenseForm";
 import { Expense } from "../types";
 import useAddExpense from "../hooks/useAddExpense";
 import BackButton from "./common/BackButton";
-import useGetAllCategories from "hooks/useGetAllCategories";
+import useGetAllCategories from "../hooks/useGetAllCategories";
 
 const AddExpense = () => {
   const { data: categories } = useGetAllCategories();
