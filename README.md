@@ -15,11 +15,11 @@ Currently you can add, edit and delete expenses. You can see the current month s
 1. Run `cd server/`
 2. Run `npm i`
 3. Now we need to create the DB (so if you didn't installed the MySql before do it now):
-3.1. Run `mysql -u root -p`
-3.2. Enter your password
-3.3. Run `source  path/to/project/expanse-tracker/server/src/db/schema.sql`
-3.4. The DB should be created. Run `show databases;`, if the DB was created successfully you should be able to see a new DB named `expense_tracker` in your DB list.
-4. Run `npm run dev`
+4. Run `mysql -u root -p`
+5. Enter your password
+6. Run `source  path/to/project/expanse-tracker/server/src/db/schema.sql`
+7. The DB should be created. Run `show databases;`, if the DB was created successfully you should be able to see a new DB named `expense_tracker` in your DB list.
+8. Run `npm run dev`
 
 ### Client
 
