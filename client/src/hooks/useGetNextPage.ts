@@ -1,48 +1,51 @@
 import { useMutation, useQueryClient } from "react-query";
-import { State } from "../types";
-import api from "../api";
+import { Expense, State } from "src/types";
+import api from "src/api";
 import { useDispatch, useSelector } from "react-redux";
-import { setNoMoreData, setPage, setRateLimit } from "../reducers/global";
+import { setNoMoreData, setPage } from "src/reducers/global";
 import { AxiosError } from "axios";
 
-function useGetNextPage() {
+interface Props {
+  onError: (msg: string) => void;
+}
+
+function useGetNextPage({ onError }: Props) {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
-  const rateLimit = useSelector((state: State) => state.global.rateLimit);
+  const { sortBy, sortDirection, q } = useSelector(
+    (state: State) => state.global
+  );
 
   return useMutation(
     "infiniteScroll",
     async (page: number) => {
-      const newIssues = await api.searchIssues(page);
+      const response = await api.getExpenses({
+        sortBy,
+        sortDirection,
+        page,
+        q,
+      });
 
-      queryClient.setQueryData(
-        "issues",
-        (oldState: Issue[] | undefined) =>
-          [...(oldState || []), ...newIssues.data.issues] as Issue[]
+      response.data.forEach((expense: Expense) =>
+        queryClient.setQueryData(["expense", expense.id], expense)
       );
 
+      queryClient.setQueryData(
+        ["expenses", { sortBy, sortDirection, q }],
+        (oldState: Expense[] | undefined) =>
+          [...(oldState || []), ...response.data] as Expense[]
+      );
       dispatch(setPage(page));
 
-      const endOfArticles = !newIssues.data.issues.length;
+      const endOfExpenses = !response.data.length;
 
-      if (endOfArticles) {
+      if (endOfExpenses) {
         dispatch(setNoMoreData(true));
       }
-      if (rateLimit) {
-        dispatch(setRateLimit(false));
-      }
-      return newIssues.data.issues;
+      return response.data;
     },
     {
-      onError: (error: AxiosError<{ code: string; message: string }>) => {
-        if (error.response?.data.code === "RATE_LIMIT") {
-          dispatch(setRateLimit(true));
-        } else {
-          alert(
-            "There was a problem with fetching the issues. Please try again"
-          );
-        }
-      },
+      onError: (error: AxiosError) => onError(error.message),
     }
   );
 }

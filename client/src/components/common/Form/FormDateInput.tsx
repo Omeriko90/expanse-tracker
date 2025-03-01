@@ -3,6 +3,7 @@ import {
   Controller,
   FieldValues,
   UseControllerProps,
+  useFormContext,
 } from "react-hook-form";
 import { Box, SxProps, Theme, Typography } from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -10,7 +11,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 interface FormDateInputProps<T extends FieldValues>
   extends UseControllerProps<T> {
-  control: Control<T>;
   label?: string;
   placeholder?: string;
   required?: boolean;
@@ -19,8 +19,8 @@ interface FormDateInputProps<T extends FieldValues>
 }
 
 function FormDateInput<T extends FieldValues>(props: FormDateInputProps<T>) {
-  const { control, name, label, required, sx = {} } = props;
-
+  const { name, label, required, sx = {} } = props;
+  const { control } = useFormContext();
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Controller

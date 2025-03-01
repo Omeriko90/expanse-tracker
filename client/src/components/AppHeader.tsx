@@ -8,11 +8,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { setSearch } from "../reducers/global";
-import SearchInput from "./common/SearchInput";
+import { setSearch } from "src/reducers/global";
+import SearchInput from "components/common/SearchInput";
 import { debounce } from "lodash";
 import { Search } from "@mui/icons-material";
-import IconButton from "./common/IconButton";
+import IconButton from "components/common/IconButton";
 
 function AppHeader() {
   const [isCollapseOpen, setIsCollapseOpen] = useState(false);
@@ -72,7 +72,6 @@ function AppHeader() {
             <SearchInput
               fullWidth
               onChange={handleSearch}
-              withDebounce
               style={{ background: "#F3F4F6FF" }}
             />
           </Box>
@@ -92,7 +91,6 @@ function AppHeader() {
             <SearchInput
               fullWidth
               onChange={handleSearch}
-              withDebounce
               style={{ background: "#F3F4F6FF" }}
             />
           </Collapse>

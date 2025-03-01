@@ -1,37 +1,46 @@
-import { Box, Typography } from "@mui/material";
-import ExpenseForm from "./common/ExpenseForm";
-import { Expense } from "../types";
-import useAddExpense from "../hooks/useAddExpense";
-import BackButton from "./common/BackButton";
-import useGetAllCategories from "../hooks/useGetAllCategories";
+import ExpenseForm from "components/common/ExpenseForm";
+import { Expense, SnackbarType } from "src/types";
+import useAddExpense from "hooks/useAddExpense";
+import Dialog from "components/common/Dialog";
+import { useDispatch } from "react-redux";
+import { setSnackbarMsg, setSnackbarType } from "src/reducers/global";
 
-const AddExpense = () => {
-  const { data: categories } = useGetAllCategories();
-  const { mutate: AddExpense } = useAddExpense();
+interface Props {
+  onClose: () => void;
+}
+
+const AddExpense = ({ onClose }: Props) => {
+  const dispatch = useDispatch();
+  const { mutate: AddExpense, isLoading } = useAddExpense({
+    onSuccess: () => {
+      dispatch(setSnackbarType(SnackbarType.SUCESS));
+      dispatch(setSnackbarMsg("Expense created successfully."));
+      onClose();
+    },
+    onError: (msg: string) => {
+      dispatch(setSnackbarType(SnackbarType.DANGER));
+      dispatch(setSnackbarMsg(msg));
+    },
+  });
 
   const handleAddExpenseSubmit = (newExpense: Expense) => {
-    const selectedCategory = categories?.find((category) => category);
-    AddExpense(newExpense);
+    if (!newExpense.category_id) {
+      dispatch(setSnackbarMsg("Category is required"));
+      dispatch(setSnackbarType(SnackbarType.DANGER));
+    } else {
+      AddExpense(newExpense);
+    }
   };
 
   return (
-    <Box>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          mb: 4,
-        }}
-      >
-        <BackButton />
-        <Box sx={{ display: "flex", flex: 1, justifyContent: "center" }}>
-          <Typography variant="h5" gutterBottom>
-            Add New Expense
-          </Typography>
-        </Box>
-      </Box>
-      <ExpenseForm onSubmit={handleAddExpenseSubmit} btnLabel="Add" />
-    </Box>
+    <Dialog onClose={onClose} title="Add New Expense">
+      <ExpenseForm
+        onSubmit={handleAddExpenseSubmit}
+        isSubmitting={isLoading}
+        onCancel={onClose}
+        btnLabel="Add"
+      />
+    </Dialog>
   );
 };
 

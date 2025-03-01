@@ -5,30 +5,41 @@ export enum SortDirection {
   DESC = "desc",
   ASC = "asc",
 }
+export enum SnackbarType {
+  DANGER = "danger",
+  SUCESS = "success",
+}
+export enum Categories {
+  HOUSING = "housing",
+  TRANSPORTATION = "transportation",
+  FOOD = "food",
+  UTILITIES = "utilities",
+  INSURANCE = "insurance",
+  MEDICAL_HEALTHCARE = "medical_healthcare",
+  SAVING_INVESTING_DEBT_PAYMENTS = "saving_investing_debt_payments",
+  PERSONAL = "personal",
+  ENTERTAINMENT = "entertainment",
+  OTHER = "other",
+}
 
 export interface Option {
   id: string;
   label: string;
 }
 
-export interface Sort {
+export interface Search {
   sortBy: string;
   sortDirection: SortDirection;
-}
-
-export interface Reporter {
-  login: string;
-  id: number;
-  avatar_url: string;
-  html_url: string;
+  q: string;
+  page: number;
 }
 
 export interface Expense {
   id: number;
-  createdAt: Dayjs;
+  created_at: Dayjs;
   description?: string;
-  category: string;
-  amount: number;
+  category_id: string;
+  amount: string;
 }
 
 export interface State {
@@ -36,8 +47,8 @@ export interface State {
 }
 
 export interface Category {
-  id: string;
-  title: string;
+  id: Categories;
+  name: string;
   description: string;
-  createdAt?: string;
+  created_at?: string;
 }

@@ -1,4 +1,4 @@
-import { Autocomplete, Box, TextField, Typography } from "@mui/material";
+import { MenuItem, Select, Typography } from "@mui/material";
 import { SORT_BY_OPTIONS } from "../../constants";
 import { useDispatch, useSelector } from "react-redux";
 import { SortDirection, State } from "../../types";
@@ -12,6 +12,7 @@ function SortBySelect() {
 
   const handleChange = (value: string) => {
     let newDirection = SortDirection.DESC;
+
     if (sortBy === value) {
       newDirection = isAscDirection ? SortDirection.DESC : SortDirection.ASC;
     } else {
@@ -39,37 +40,32 @@ function SortBySelect() {
   );
 
   return (
-    <Autocomplete
-      options={SORT_BY_OPTIONS}
-      defaultValue={SORT_BY_OPTIONS[0]}
-      multiple={false}
-      freeSolo={false}
-      disableClearable
-      disableCloseOnSelect
+    <Select
+      value={sortBy}
       fullWidth
-      renderOption={(props, option) => {
-        const { key, ...optionProps } = props;
+      renderValue={(selected: string) => {
+        const selectedOption = SORT_BY_OPTIONS.find((op) => op.id === selected);
+        return (
+          <Typography sx={{ textAlign: "start" }}>
+            {selectedOption?.label || SORT_BY_OPTIONS[0].label}
+          </Typography>
+        );
+      }}
+    >
+      {SORT_BY_OPTIONS.map((option) => {
         const isSelected = sortBy === option.id;
         return (
-          <Box
-            key={key}
-            component="li"
-            {...optionProps}
+          <MenuItem
+            selected={isSelected}
+            sx={{ justifyContent: "space-between" }}
             onClick={() => handleChange(option.id)}
-            sx={{
-              display: "flex",
-              justifyContent: "space-between !important",
-            }}
           >
             <Typography>{option.label}</Typography>
             {isSelected && DirectionComponent}
-          </Box>
+          </MenuItem>
         );
-      }}
-      renderInput={(params) => (
-        <TextField {...params} fullWidth label="Sort by" />
-      )}
-    />
+      })}
+    </Select>
   );
 }
 

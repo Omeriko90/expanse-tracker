@@ -20,6 +20,7 @@ router.post("/create_expense", async (req: Request, res: Response) => {
     res.status(500).json(error);
   }
 });
+
 router.put("/update_expense/:id", async (req: Request, res: Response) => {
   try {
     const body = req.body;
@@ -51,7 +52,7 @@ router.post("/total", async (req: Request, res: Response) => {
     const body = req.body;
     const start = body.start;
     const end = body.end;
-    console.log("object");
+
     if (!start || !end) {
       res.status(400).json("Invalid date range");
     }
@@ -59,7 +60,6 @@ router.post("/total", async (req: Request, res: Response) => {
       start as string,
       end as string
     );
-    console.log(expense);
     res.send(expense);
   } catch (error: any) {
     console.log(error);
@@ -70,6 +70,7 @@ router.post("/total", async (req: Request, res: Response) => {
 router.get("/:id", async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
+    console.log("here");
     if (!id) {
       res.status(400).json("Missing expense Id");
     }
@@ -80,12 +81,14 @@ router.get("/:id", async (req: Request, res: Response) => {
     res.status(500).json(error);
   }
 });
-router.get("/", async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
-    const { sortBy, sortDirection } = req.query;
+    const { sortBy, sortDirection, page, q: searchQuery } = req.body;
     const response = await getAllExpenses(
       sortBy as string,
-      sortDirection as string
+      sortDirection as string,
+      parseInt(page as string),
+      (searchQuery as string) || ""
     );
 
     res.send(response);

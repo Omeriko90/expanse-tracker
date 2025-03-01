@@ -1,13 +1,12 @@
-import { useQuery } from "react-query";
-import api from "src/api";
 import { ONE_HOUR_IN_MS } from "src/constants";
+import api from "src/api";
+import { useQuery } from "react-query";
 
-function useGetExpense(id: number) {
+function useGetCategory(id: string) {
   return useQuery(
-    ["expense", id],
+    ["category", id],
     async () => {
-      const response = await api.getExpensesById(id);
-
+      const response = await api.getCategoryById(id);
       return response.data;
     },
     {
@@ -18,4 +17,4 @@ function useGetExpense(id: number) {
   );
 }
 
-export default useGetExpense;
+export default useGetCategory;

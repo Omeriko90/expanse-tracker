@@ -20,7 +20,7 @@ function CreatedAt({ createdAt }: Props) {
     >
       <Event sx={{ width: 24, height: 24 }} />
       <Typography variant="body2" color="text.primary">
-        {moment(createdAt).format("LL")}
+        {moment(createdAt).format("L LT")}
       </Typography>
     </Box>
   );

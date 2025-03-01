@@ -1,5 +1,6 @@
 import { Expense } from "@/types";
 import { default as pool } from "./connection";
+import { ResultSetHeader } from "mysql2";
 
 async function getExpenseById(id: string) {
   const [rows] = await pool.query(
@@ -22,7 +23,7 @@ async function getTotalExpenseSummaryByDateRange(start: string, end: string) {
     `
           SELECT sum(amount) as totalAmount
           FROM expenses
-          WHERE createdAt between timestamp(?) and timestamp(?)
+          WHERE created_at between timestamp(?) and timestamp(?)
           `,
     [start, end]
   );
@@ -33,44 +34,57 @@ async function getTotalExpenseSummaryByDateRange(start: string, end: string) {
   }
 }
 
-async function getAllExpenses(sortBy: string, sortDirection: string) {
+async function getAllExpenses(
+  sortBy: string,
+  sortDirection: string,
+  page: number,
+  searchQuery: string
+) {
+  const page_size = 5;
+  const search = `%${searchQuery.toLowerCase()}%`;
+
   const [rows] = await pool.query(
     `
           SELECT * 
-          FROM expenses order by ${sortBy} ${sortDirection}`
+          FROM expenses where lower(description) like ? or category_id like ?  order by ? ? limit ? offset ?`,
+    [search, search, sortBy, sortDirection, page_size, page * page_size]
   );
   return rows;
 }
 
 async function insertExpense(newExpense: Expense) {
-  const [row] = await pool.query(
+  const [row] = await pool.query<ResultSetHeader>(
     `insert into expenses (description ,
-    category,
+    category_id,
     amount,
-    createdAt) values (?,?,?,TIMESTAMP(?))`,
+    created_at) values (?,?,?,TIMESTAMP(?))`,
     [
-      newExpense.description || "null",
-      newExpense.category,
+      newExpense.description,
+      newExpense.category_id,
       newExpense.amount,
-      newExpense.createdAt,
+      newExpense.created_at,
     ]
   );
 
-  return row;
+  const newRow = await getExpenseById(row.insertId.toString());
+
+  return newRow;
 }
 
 async function updateExpense(id: string, expense: Expense) {
   const [row] = await pool.query(
-    `update expenses set description=?, category=?, amount=?,createdAt=? where id=?`,
+    `update expenses set description=?, category_id=?, amount=?,created_at=? where id=?;`,
     [
       expense.description,
-      expense.category,
+      expense.category_id || null,
       expense.amount,
-      expense.createdAt,
+      expense.created_at,
       id,
     ]
   );
-  return row;
+
+  const updatedRow = await getExpenseById(id);
+  return updatedRow;
 }
 async function deleteExpenseById(id: string) {
   await pool.query(`delete from expenses where id=?`, [id]);

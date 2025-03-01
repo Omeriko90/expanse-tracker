@@ -1,16 +1,23 @@
 import { useQuery, useQueryClient } from "react-query";
-import api from "../api";
-import { Expense, State } from "../types";
-import { ONE_HOUR_IN_MS } from "../constants";
+import api from "src/api";
+import { Expense, State } from "src/types";
+import { ONE_HOUR_IN_MS } from "src/constants";
 import { useSelector } from "react-redux";
 
-function useGetAllExpenses() {
+function useGetExpenses(page: number) {
   const queryClient = useQueryClient();
-  const { sortBy, sortDirection } = useSelector((state: State) => state.global);
+  const { sortBy, sortDirection, q } = useSelector(
+    (state: State) => state.global
+  );
   return useQuery(
-    ["expenses", { sortBy, sortDirection }],
+    ["expenses", { sortBy, sortDirection, q }],
     async () => {
-      const response = await api.getAllExpenses({ sortBy, sortDirection });
+      const response = await api.getExpenses({
+        sortBy,
+        sortDirection,
+        q,
+        page,
+      });
       const expenses = response.data;
 
       expenses.forEach((expense: Expense) =>
@@ -27,4 +34,4 @@ function useGetAllExpenses() {
   );
 }
 
-export default useGetAllExpenses;
+export default useGetExpenses;

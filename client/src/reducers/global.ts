@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { SortDirection } from "../types";
+import { SnackbarType, SortDirection } from "../types";
 
 export interface State {
   page: number;
@@ -7,16 +7,22 @@ export interface State {
   q: string;
   sortBy: string;
   sortDirection: SortDirection;
+  editExpenseId: string;
+  snackbarMsg: string;
+  snackbarType: SnackbarType;
 }
 
 const globalSlice = createSlice({
   name: "global",
   initialState: {
-    page: 1,
+    page: 0,
     noMoreData: false,
     q: null,
-    sortBy: "createdAt",
+    editExpenseId: null,
+    sortBy: "created_at",
     sortDirection: SortDirection.DESC,
+    snackbarMsg: null,
+    snackbarType: SnackbarType.SUCESS,
   },
   reducers: {
     setNoMoreData(state, action) {
@@ -34,6 +40,15 @@ const globalSlice = createSlice({
     setSortDirection(state, action) {
       state.sortDirection = action.payload;
     },
+    setEditExpenseId(state, action) {
+      state.editExpenseId = action.payload;
+    },
+    setSnackbarMsg(state, action) {
+      state.snackbarMsg = action.payload;
+    },
+    setSnackbarType(state, action) {
+      state.snackbarType = action.payload;
+    },
   },
 });
 
@@ -43,5 +58,8 @@ export const {
   setSearch,
   setSortDirection,
   setSortBy,
+  setEditExpenseId,
+  setSnackbarMsg,
+  setSnackbarType,
 } = globalSlice.actions;
 export default globalSlice.reducer;

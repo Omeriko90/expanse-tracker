@@ -1,9 +1,15 @@
 import { useMutation, useQueryClient } from "react-query";
-import { Expense } from "../types";
-import api from "../api";
-// import { AxiosError } from "axios";
+import { Expense } from "src/types";
+import api from "src/api";
+import { AxiosError } from "axios";
 
-function useUpdateExpense(id: number) {
+interface Props {
+  id: number;
+  onSuccess: () => void;
+  onError: (msg: string) => void;
+}
+
+function useUpdateExpense({ id, onSuccess, onError }: Props) {
   const queryClient = useQueryClient();
 
   return useMutation(
@@ -23,19 +29,9 @@ function useUpdateExpense(id: number) {
         })
       );
 
-      return newExpense;
-    }
-    // {
-    //   onError: (error: AxiosError<{ code: string; message: string }>) => {
-    //     if (error.response?.data.code === "RATE_LIMIT") {
-    //       dispatch(setRateLimit(true));
-    //     } else {
-    //       alert(
-    //         "There was a problem with fetching the issues. Please try again"
-    //       );
-    //     }
-    //   },
-    // }
+      return updatedExpense;
+    },
+    { onSuccess, onError: (error: AxiosError) => onError(error.message) }
   );
 }
 

@@ -1,5 +1,5 @@
 import { Box, SxProps, Typography } from "@mui/material";
-import OopsImg from "../assets/oops.png";
+import OopsImg from "assets/oops.png";
 
 interface Props {
   title: string;

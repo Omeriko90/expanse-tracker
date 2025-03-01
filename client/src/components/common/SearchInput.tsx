@@ -1,34 +1,21 @@
 import { Clear, Search } from "@mui/icons-material";
 import { OutlinedInput, SxProps } from "@mui/material";
-import { debounce } from "lodash";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import IconButton from "./IconButton";
 interface Props {
   onChange: (value: string) => void;
   fullWidth?: boolean;
   placeholder?: string;
-  withDebounce?: boolean;
   style?: SxProps;
 }
 
 function SearchInput(props: Props) {
-  const { onChange, fullWidth, placeholder, withDebounce, style } = props;
+  const { onChange, fullWidth, placeholder, style } = props;
   const [value, setValue] = useState("");
-
-  const debouncedSearch = useCallback(
-    debounce((searchTerm: string) => {
-      onChange(searchTerm);
-    }, 500),
-    []
-  );
 
   const handleSearch = (value: string) => {
     setValue(value);
-    if (withDebounce) {
-      debouncedSearch(value);
-    } else {
-      onChange(value);
-    }
+    onChange(value);
   };
 
   const handleClear = () => {

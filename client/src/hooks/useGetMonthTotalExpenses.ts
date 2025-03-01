@@ -1,4 +1,4 @@
-import api from "../api";
+import api from "src/api";
 import moment from "moment";
 import { useQuery } from "react-query";
 

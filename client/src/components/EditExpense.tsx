@@ -1,16 +1,33 @@
-import { Box, Skeleton, Typography } from "@mui/material";
-import ExpenseForm from "./common/ExpenseForm";
-import { Expense } from "../types";
-import useUpdateExpense from "../hooks/useUpdateExpense";
-import useGetExpense from "../hooks/useGetExpense";
-import { useParams } from "react-router-dom";
-import BackButton from "./common/BackButton";
+import { CircularProgress, Skeleton, Typography } from "@mui/material";
+import ExpenseForm from "components/common/ExpenseForm";
+import { Expense, SnackbarType } from "src/types";
+import useUpdateExpense from "hooks/useUpdateExpense";
+import useGetExpense from "hooks/useGetExpense";
+import Dialog from "components/common/Dialog";
+import { useDispatch } from "react-redux";
+import { setSnackbarMsg, setSnackbarType } from "src/reducers/global";
 
-const EditExpense = () => {
-  const { id } = useParams<{ id: string }>();
+interface Props {
+  onClose: () => void;
+  id: string;
+}
+
+const EditExpense = ({ onClose, id }: Props) => {
+  const dispatch = useDispatch();
   const intId = parseInt(id);
   const { data: expense, isLoading } = useGetExpense(intId);
-  const { mutate: updateExpense } = useUpdateExpense(intId);
+  const { mutate: updateExpense, isLoading: isUpdating } = useUpdateExpense({
+    id: intId,
+    onSuccess: () => {
+      dispatch(setSnackbarType(SnackbarType.SUCESS));
+      dispatch(setSnackbarMsg("Expense updated successfully."));
+      onClose();
+    },
+    onError: (msg: string) => {
+      dispatch(setSnackbarType(SnackbarType.DANGER));
+      dispatch(setSnackbarMsg(msg));
+    },
+  });
 
   const handleAddExpenseSubmit = (updatedExpense: Expense) => {
     updateExpense(updatedExpense);
@@ -21,29 +38,21 @@ const EditExpense = () => {
   }
 
   return (
-    <Box>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          mb: 4,
-        }}
-      >
-        <BackButton />
-        <Box sx={{ display: "flex", flex: 1, justifyContent: "center" }}>
-          <Typography variant="h5" gutterBottom>
-            Update Expense
-          </Typography>
-        </Box>
-      </Box>
-      {expense && (
+    <Dialog onClose={onClose} title="Edit Expense">
+      {isLoading ? (
+        <CircularProgress />
+      ) : expense ? (
         <ExpenseForm
           expense={expense}
+          isSubmitting={isUpdating}
+          onCancel={onClose}
           onSubmit={handleAddExpenseSubmit}
-          btnLabel={"Update"}
+          btnLabel="Update"
         />
+      ) : (
+        <Typography variant="h2">Failed to fetch Expense</Typography>
       )}
-    </Box>
+    </Dialog>
   );
 };
 

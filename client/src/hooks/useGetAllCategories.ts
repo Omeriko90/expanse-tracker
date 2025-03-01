@@ -1,13 +1,17 @@
-import { ONE_HOUR_IN_MS } from "../constants";
-import api from "../api";
-import { useQuery } from "react-query";
+import { ONE_HOUR_IN_MS } from "src/constants";
+import api from "src/api";
+import { useQuery, useQueryClient } from "react-query";
+import { Category } from "src/types";
 
 function useGetAllCategories() {
+  const queryClient = useQueryClient();
   return useQuery(
     "categories",
     async () => {
       const response = await api.getAllCategories();
-
+      response.data.forEach((category: Category) =>
+        queryClient.setQueryData(["category", category.id], category)
+      );
       return response.data;
     },
     {

@@ -1,13 +1,19 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Box, Button, CircularProgress } from "@mui/material";
-import { useSelector } from "react-redux";
-import { State } from "../../types";
+import { useDispatch, useSelector } from "react-redux";
+import { SnackbarType, State } from "../../types";
 import useGetNextPage from "../../hooks/useGetNextPage";
-import useGetIssues from "../../hooks/useGetIssues";
+import { setSnackbarMsg, setSnackbarType } from "src/reducers/global";
 
-const AutoFetcher: React.FC = () => {
-  const { data: articles, isLoading: initIsLoading } = useGetIssues();
-  const { mutate: getNextPage, isLoading } = useGetNextPage();
+const AutoFetcher = () => {
+  const dispatch = useDispatch();
+  // const { data: articles, isLoading: initIsLoading } = useGetIssues();
+  const { mutate: getNextPage, isLoading } = useGetNextPage({
+    onError: (msg: string) => {
+      dispatch(setSnackbarType(SnackbarType.DANGER));
+      dispatch(setSnackbarMsg(msg));
+    },
+  });
   const currentPageNumber = useSelector((state: State) => state.global.page);
   const observerRef = useRef<HTMLDivElement | null>(null);
 
@@ -16,9 +22,9 @@ const AutoFetcher: React.FC = () => {
       (entries) => {
         if (
           entries[0].isIntersecting &&
-          !isLoading &&
-          !initIsLoading &&
-          (articles?.length || 0) > 0
+          !isLoading
+          // !initIsLoading &&
+          // (articles?.length || 0) > 0
         ) {
           getNextPage(currentPageNumber + 1);
         }

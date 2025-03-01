@@ -1,13 +1,13 @@
 export interface Expense {
   id: number;
-  createdAt: string;
+  created_at: string;
   description?: string;
-  category: string;
+  category_id: string;
   amount: number;
 }
 export interface Category {
   id: string;
   title: string;
   description: string;
-  createdAt: string;
+  created_at: string;
 }

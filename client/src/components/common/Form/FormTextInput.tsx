@@ -4,11 +4,11 @@ import {
   Controller,
   FieldValues,
   UseControllerProps,
+  useFormContext,
 } from "react-hook-form";
 
 interface FormTextInputProps<T extends FieldValues>
   extends UseControllerProps<T> {
-  control: Control<T>;
   label?: string;
   placeholder?: string;
   required?: boolean;
@@ -20,7 +20,6 @@ interface FormTextInputProps<T extends FieldValues>
 
 function FormTextInput<T extends FieldValues>(props: FormTextInputProps<T>) {
   const {
-    control,
     name,
     label,
     placeholder,
@@ -30,6 +29,7 @@ function FormTextInput<T extends FieldValues>(props: FormTextInputProps<T>) {
     sx = {},
     onBlur,
   } = props;
+  const { control } = useFormContext();
   return (
     <Controller
       control={control}

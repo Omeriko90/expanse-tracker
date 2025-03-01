@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { Category, Expense, Sort } from "../types";
+import { Category, Expense, Search } from "../types";
 import api from "./api";
 import { convertDayjsToTimestamp } from "../helpers";
 import moment from "moment";
@@ -16,7 +16,7 @@ interface ApiType {
     startMonthDate: string;
     endMonthDate: string;
   }) => Promise<AxiosResponse<{ totalAmount: number }>>;
-  getAllExpenses: (sort: Sort) => Promise<AxiosResponse<Expense[]>>;
+  getExpenses: (sort: Search) => Promise<AxiosResponse<Expense[]>>;
   getExpensesById: (id: number) => Promise<AxiosResponse<Expense>>;
   deleteExpense: (id: number) => Promise<AxiosResponse<{ success: boolean }>>;
   addCategory: (
@@ -27,7 +27,7 @@ interface ApiType {
     updatedCategory: Category
   ) => Promise<AxiosResponse<{ category: Category }>>;
   getAllCategories: () => Promise<AxiosResponse<Category[]>>;
-  getCategoryById: (id: number) => Promise<AxiosResponse<Category>>;
+  getCategoryById: (id: string) => Promise<AxiosResponse<Category>>;
   deleteCategory: (id: number) => Promise<AxiosResponse<{ success: boolean }>>;
 }
 
@@ -35,19 +35,17 @@ export default {
   addExpense: (newExpense: Expense) =>
     api.post("/expenses/create_expense", {
       ...newExpense,
-      createdAt: convertDayjsToTimestamp(newExpense.createdAt),
+      amount: parseInt(newExpense.amount),
+      created_at: convertDayjsToTimestamp(newExpense.created_at),
     }),
   updateExpense: (id: number, updatedExpense: Expense) =>
     api.put(`/expenses/update_expense/${id}`, {
       expense: {
         ...updatedExpense,
-        createdAt: convertDayjsToTimestamp(updatedExpense.createdAt),
+        created_at: convertDayjsToTimestamp(updatedExpense.created_at),
       },
     }),
-  getAllExpenses: (sort: Sort) =>
-    api.get(
-      `/expenses?sortBy=${sort.sortBy}&sortDirection=${sort.sortDirection}`
-    ),
+  getExpenses: (search: Search) => api.post(`/expenses`, { ...search }),
   getExpensesById: (id: number) => api.get(`/expenses/${id}`),
   getMonthTotalExpense: (dateRange: {
     startMonthDate: string;
@@ -61,12 +59,12 @@ export default {
   addCategory: (newCategory: Category) =>
     api.post("/categories/create_category", {
       ...newCategory,
-      createdAt: moment().format("YYYY-MM-DD HH:mm:ss"),
+      created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
     }),
   updateCategory: (id: number, updatedCategory: Category) =>
     api.put(`/categories/update_category/${id}`, { updatedCategory }),
   getAllCategories: () => api.get("/categories"),
-  getCategoryById: (id: number) => api.get(`/categories/${id}`),
+  getCategoryById: (id: string) => api.get(`/categories/${id}`),
   deleteCategory: (id: number) =>
     api.delete(`/categories/delete_category/${id}`),
 } as ApiType;

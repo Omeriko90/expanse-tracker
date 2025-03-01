@@ -1,9 +1,14 @@
 import { useMutation, useQueryClient } from "react-query";
-import { Expense } from "../types";
-import api from "../api";
-// import { AxiosError } from "axios";
+import { Expense } from "src/types";
+import api from "src/api";
+import { AxiosError } from "axios";
 
-function useDeleteExpense() {
+interface Props {
+  onSuccess: () => void;
+  onError: (msg: string) => void;
+}
+
+function useDeleteExpense({ onSuccess, onError }: Props) {
   const queryClient = useQueryClient();
 
   return useMutation(
@@ -20,6 +25,10 @@ function useDeleteExpense() {
             (oldState || [])?.filter((expense: Expense) => expense.id !== id)
         );
       }
+    },
+    {
+      onSuccess,
+      onError: (error: AxiosError) => onError(error.message),
     }
     // {
     //   onError: (error: AxiosError<{ code: string; message: string }>) => {

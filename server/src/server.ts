@@ -18,7 +18,6 @@ app.use(cors());
 app.use("/expenses", expenses);
 app.use("/categories", categories);
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

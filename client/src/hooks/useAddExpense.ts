@@ -1,11 +1,18 @@
 import { useMutation, useQueryClient } from "react-query";
-import { Expense } from "../types";
-import api from "../api";
-import moment from "moment";
-// import { AxiosError } from "axios";
+import { Expense, SortDirection, State } from "src/types";
+import api from "src/api";
+import { AxiosError } from "axios";
+import { useSelector } from "react-redux";
+import { getIsBiggerBySortField } from "src/helpers";
 
-function useAddExpense() {
+interface Props {
+  onSuccess: () => void;
+  onError: (msg: string) => void;
+}
+
+function useAddExpense({ onSuccess, onError }: Props) {
   const queryClient = useQueryClient();
+  const { sortBy, sortDirection } = useSelector((state: State) => state.global);
 
   return useMutation(
     "addExpense",
@@ -16,24 +23,30 @@ function useAddExpense() {
       queryClient.setQueryData(["expense", newExpense.id], newExpense);
 
       queryClient.setQueryData(
-        "expenses",
-        (oldState: Expense[] | undefined) =>
-          [...(oldState || []), newExpense] as Expense[]
+        ["expenses", { sortBy, sortDirection }],
+        (oldState: Expense[] | undefined) => {
+          const isAsceding = sortDirection === SortDirection.ASC;
+          const insertIndex =
+            oldState?.findIndex((data: Expense) => {
+              const isBigger = getIsBiggerBySortField(sortBy, data, newExpense);
+              if ((isAsceding && isBigger) || (!isAsceding && !isBigger)) {
+                return true;
+              }
+            }) || 0;
+          return [
+            ...(oldState?.slice(0, insertIndex) || []),
+            newExpense,
+            ...(oldState?.slice(insertIndex) || []),
+          ];
+        }
       );
 
       return expense;
+    },
+    {
+      onSuccess,
+      onError: (error: AxiosError) => onError(error.message),
     }
-    // {
-    //   onError: (error: AxiosError<{ code: string; message: string }>) => {
-    //     if (error.response?.data.code === "RATE_LIMIT") {
-    //       dispatch(setRateLimit(true));
-    //     } else {
-    //       alert(
-    //         "There was a problem with fetching the issues. Please try again"
-    //       );
-    //     }
-    //   },
-    // }
   );
 }
 
