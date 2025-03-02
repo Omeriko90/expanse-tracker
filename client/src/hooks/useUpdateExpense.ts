@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "react-query";
-import { Expense } from "src/types";
+import { Expense, State } from "src/types";
 import api from "src/api";
 import { AxiosError } from "axios";
+import { useSelector } from "react-redux";
 
 interface Props {
   id: number;
@@ -11,7 +12,9 @@ interface Props {
 
 function useUpdateExpense({ id, onSuccess, onError }: Props) {
   const queryClient = useQueryClient();
-
+  const { sortBy, sortDirection, q } = useSelector(
+    (state: State) => state.global
+  );
   return useMutation(
     "updateExpense",
     async (updatedExpense: Expense) => {
@@ -20,13 +23,15 @@ function useUpdateExpense({ id, onSuccess, onError }: Props) {
 
       queryClient.setQueryData(["expense", id], newExpense);
 
-      queryClient.setQueryData("expenses", (oldState: Expense[] | undefined) =>
-        (oldState || [])?.map((expense: Expense) => {
-          if (expense.id === id) {
-            return newExpense;
-          }
-          return expense;
-        })
+      queryClient.setQueryData(
+        ["expenses", { sortBy, sortDirection, q }],
+        (oldState: Expense[] | undefined) =>
+          (oldState || [])?.map((expense: Expense) => {
+            if (expense.id === id) {
+              return newExpense;
+            }
+            return expense;
+          })
       );
 
       return updatedExpense;

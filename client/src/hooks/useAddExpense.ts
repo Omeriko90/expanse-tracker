@@ -12,7 +12,9 @@ interface Props {
 
 function useAddExpense({ onSuccess, onError }: Props) {
   const queryClient = useQueryClient();
-  const { sortBy, sortDirection } = useSelector((state: State) => state.global);
+  const { sortBy, sortDirection, q } = useSelector(
+    (state: State) => state.global
+  );
 
   return useMutation(
     "addExpense",
@@ -23,7 +25,7 @@ function useAddExpense({ onSuccess, onError }: Props) {
       queryClient.setQueryData(["expense", newExpense.id], newExpense);
 
       queryClient.setQueryData(
-        ["expenses", { sortBy, sortDirection }],
+        ["expenses", { sortBy, sortDirection, q }],
         (oldState: Expense[] | undefined) => {
           const isAsceding = sortDirection === SortDirection.ASC;
           const insertIndex =
