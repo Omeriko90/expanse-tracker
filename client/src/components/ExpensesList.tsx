@@ -43,13 +43,7 @@ function ExpensesList(props: Props) {
     );
   }
 
-  const displayExpenses = searchValue
-    ? expenses?.filter((issue) =>
-        issue.description?.toLowerCase().includes(searchValue.toLowerCase())
-      )
-    : expenses;
-
-  if (!displayExpenses.length) {
+  if (!expenses.length) {
     return (
       <Box
         sx={{
@@ -81,8 +75,8 @@ function ExpensesList(props: Props) {
           },
         }}
       >
-        {displayExpenses?.map((expenses) => (
-          <ExpenseCard key={`expense-${expenses.id}`} id={expenses.id} />
+        {expenses?.map((expense) => (
+          <ExpenseCard key={`expense-${expense.id}`} id={expense.id} />
         ))}
         {displayAutoFetcher && (
           <Box sx={{ margin: "16px auto", width: "50%" }}>
