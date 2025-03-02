@@ -3,11 +3,17 @@ import { SORT_BY_OPTIONS } from "../../constants";
 import { useDispatch, useSelector } from "react-redux";
 import { SortDirection, State } from "../../types";
 import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
-import { setSortBy, setSortDirection } from "../../reducers/global";
+import {
+  setNoMoreData,
+  setSortBy,
+  setSortDirection,
+} from "../../reducers/global";
 
 function SortBySelect() {
   const dispatch = useDispatch();
-  const { sortBy, sortDirection } = useSelector((state: State) => state.global);
+  const { sortBy, sortDirection, noMoreData } = useSelector(
+    (state: State) => state.global
+  );
   const isAscDirection = sortDirection === SortDirection.ASC;
 
   const handleChange = (value: string) => {
@@ -19,6 +25,9 @@ function SortBySelect() {
       dispatch(setSortBy(value));
     }
     dispatch(setSortDirection(newDirection));
+    if (noMoreData) {
+      dispatch(setNoMoreData(false));
+    }
   };
 
   const DirectionComponent = isAscDirection ? (

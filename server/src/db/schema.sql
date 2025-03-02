@@ -44,7 +44,7 @@ values
 ('insurance', 'Family health insurance',150,  TIMESTAMP('2025-02-01 10:35:00')),
 ('entertainment', 'Standup',250,  TIMESTAMP('2025-02-11 20:30:00')),
 ('personal','Haircut', 80,  TIMESTAMP('2025-02-21 14:10:00')),
-('personal', 'Clothes',200,  TIMESTAMP('2025-02-08 17:00:00'))
+('personal', 'Clothes',200,  TIMESTAMP('2025-02-08 17:00:00')),
 ('saving_investing_debt_payments','Car loan', 235, TIMESTAMP('2024-02-01 10:00:00')),
 ('other', "Restaurant for dad's birthday",400 , TIMESTAMP('2025-02-23 19:00:00')),
 ('housing', 'Aircondition fix',150,  TIMESTAMP('2025-03-01 12:25:00')),

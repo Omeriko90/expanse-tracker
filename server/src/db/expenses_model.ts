@@ -46,8 +46,8 @@ async function getAllExpenses(
   const [rows] = await pool.query(
     `
           SELECT * 
-          FROM expenses where lower(description) like ? or category_id like ?  order by ? ? limit ? offset ?`,
-    [search, search, sortBy, sortDirection, page_size, page * page_size]
+          FROM expenses where lower(description) like ? or category_id like ? order by ${sortBy} ${sortDirection} limit ? offset ?`,
+    [search, search, page_size, page * page_size]
   );
   return rows;
 }

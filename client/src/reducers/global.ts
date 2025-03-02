@@ -25,6 +25,10 @@ const globalSlice = createSlice({
     snackbarType: SnackbarType.SUCESS,
   },
   reducers: {
+    reset(state) {
+      state.noMoreData = false;
+      state.page = 0;
+    },
     setNoMoreData(state, action) {
       state.noMoreData = action.payload;
     },
@@ -33,12 +37,15 @@ const globalSlice = createSlice({
     },
     setSearch(state, action) {
       state.q = action.payload;
+      globalSlice.caseReducers.reset(state);
     },
     setSortBy(state, action) {
       state.sortBy = action.payload;
+      globalSlice.caseReducers.reset(state);
     },
     setSortDirection(state, action) {
       state.sortDirection = action.payload;
+      globalSlice.caseReducers.reset(state);
     },
     setEditExpenseId(state, action) {
       state.editExpenseId = action.payload;
